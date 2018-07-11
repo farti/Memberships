@@ -46,10 +46,10 @@
             @Html.DisplayFor(modelItem => item.ProductType)
             (@{@Html.DisplayFor(modelItem => item.ProductTypeId)})
         </td>
-
-        @Html.Partial("_TableButtonsPartial", new SmallButtonModel { Id = item.Id })
-    
-        </tr>
+        <td>
+            @Html.Partial("_TableButtonsPartial", new SmallButtonModel { Id = item.Id })
+       </td>
+    </tr>
 }
 
 </table>

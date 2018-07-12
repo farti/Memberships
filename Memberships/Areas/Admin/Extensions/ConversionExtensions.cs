@@ -82,8 +82,10 @@ namespace Memberships.Areas.Admin.Extensions
                 ProductId = productItem.ProductId,
                 Items = addListData ? await db.Items.ToListAsync() : null,
                 Products = addListData ? await db.Products.ToListAsync() : null,
-                ItemTitle = (await db.Items.FirstOrDefaultAsync(i => i.Id.Equals(productItem.ItemId))).Title,
-                ProductTitle = (await db.Products.FirstOrDefaultAsync(p => p.Id.Equals(productItem.ProductId))).Title
+                ItemTitle = (await db.Items.FirstOrDefaultAsync(i =>
+                    i.Id.Equals(productItem.ItemId))).Title,
+                ProductTitle = (await db.Products.FirstOrDefaultAsync(p =>
+                    p.Id.Equals(productItem.ProductId))).Title
             };
 
             return model;

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Web;
 
 namespace Memberships.Areas.Admin.Models
 {
@@ -16,12 +13,14 @@ namespace Memberships.Areas.Admin.Models
         public int? ItemId { get; set; }
         public int? ProductId { get; set; }
         public int? SubscriptionId { get; set; }
+        public string UserID { get; set; }
 
-        public string ActionParameters {
+        public string ActionParameters
+        {
             get
             {
                 var param = new StringBuilder("?");
-                if (Id!=null&&Id>0)
+                if (Id != null && Id > 0)
                 {
                     param.Append(String.Format("{0}={1}&", "id", Id));
                 }
@@ -38,9 +37,14 @@ namespace Memberships.Areas.Admin.Models
                     param.Append(String.Format("{0}={1}&", "subscriptionId", SubscriptionId));
                 }
 
+                if (UserID != null && !UserID.Equals(string.Empty))
+                {
+                    param.Append(string.Format("{0}={1}&", "subscriptionId", "userId", UserID));
+                }
+
                 return param.ToString().Substring(0, param.Length - 1);
 
             }
-        } 
+        }
     }
 }

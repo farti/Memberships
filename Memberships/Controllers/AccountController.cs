@@ -5,13 +5,11 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Memberships.Entities;
 
 namespace Memberships.Controllers
 {
@@ -607,5 +605,67 @@ namespace Memberships.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> Delete(string userId)
+        {
+            if (userId == null || userId.Equals(String.Empty))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ApplicationUser user = await UserManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            var model = new UserViewModel
+            {
+                Email = user.Email,
+                FirstName = user.FirstName,
+                Id = user.Id,
+                Password = "Fake Password"
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Delete(UserViewModel model)
+        {
+            try
+            {
+                if (model == null)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
+
+                if (ModelState.IsValid)
+                {
+                    var user = await UserManager.FindByIdAsync(model.Id);
+
+                    var result = await UserManager.DeleteAsync(user);
+                    if (result.Succeeded)
+                    {
+                        var db = new ApplicationDbContext();
+                        var subscriptions = db.UserSubscriptions.Where(u => u.UserId.Equals((user.Id)));
+                        db.UserSubscriptions.RemoveRange(subscriptions);
+                        await db.SaveChangesAsync();
+
+                        return RedirectToAction("Index", "Account");
+                    }
+
+                    AddErrors(result);
+
+                }
+            }
+            catch
+            {
+
+            }
+
+            return View(model);
+        }
     }
 }

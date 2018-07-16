@@ -48,6 +48,6 @@ namespace Memberships.Models
         public DbSet<SubscriptionProduct> SubscriptionProducts { get; set; }
         public DbSet<UserSubscription> UserSubscriptions { get; set; }
 
-        public System.Data.Entity.DbSet<Memberships.Models.UserViewModel> UserViewModels { get; set; }
+
     }
 }

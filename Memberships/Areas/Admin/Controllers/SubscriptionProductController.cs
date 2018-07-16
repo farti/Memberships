@@ -9,6 +9,8 @@ using System.Web.Mvc;
 
 namespace Memberships.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
+
     public class SubscriptionProductController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -32,7 +34,7 @@ namespace Memberships.Areas.Admin.Controllers
             {
                 return HttpNotFound();
             }
-            return View( await subscriptionProduct.Convert(db));
+            return View(await subscriptionProduct.Convert(db));
         }
 
         // GET: Admin/SubscriptionProduct/Create

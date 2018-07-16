@@ -9,7 +9,9 @@ namespace Memberships
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js",
-                        "~/Scripts/login.js"));
+                        "~/Scripts/login.js",
+                        "~/Scripts/RegisterUser.js"
+                ));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
@@ -32,7 +34,8 @@ namespace Memberships
                       "~/Scripts/AdminMenu.js"));
 
             bundles.Add(new StyleBundle("~/Content/membership").Include(
-                "~/Content/navbar.css"
+                "~/Content/navbar.css",
+                "~/Content/RegisterUSer.css"
                 ));
 
         }

@@ -1,4 +1,5 @@
-﻿using Memberships.Extensions;
+﻿using Memberships.Entities;
+using Memberships.Extensions;
 using Memberships.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -11,8 +12,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Data.Entity;
-using Memberships.Entities;
 
 namespace Memberships.Controllers
 {
@@ -683,17 +682,17 @@ namespace Memberships.Controllers
             var db = new ApplicationDbContext();
             model.UserSubscriptions = await
                 (from us in db.UserSubscriptions
-                    join s in db.Subscriptions on us.SubscriptionId equals s.Id
-                    where us.UserId.Equals(userId)
-                    select new UserSubscriptionModel
-                    {
-                        Id = us.SubscriptionId,
-                        StartDate = us.StartDate,
-                        EndDate = us.EndDate,
-                        Description = s.Description,
-                        RegistrationCode = s.RegistrationCode,
-                        Title = s.Title
-                    }).ToListAsync();
+                 join s in db.Subscriptions on us.SubscriptionId equals s.Id
+                 where us.UserId.Equals(userId)
+                 select new UserSubscriptionModel
+                 {
+                     Id = us.SubscriptionId,
+                     StartDate = us.StartDate,
+                     EndDate = us.EndDate,
+                     Description = s.Description,
+                     RegistrationCode = s.RegistrationCode,
+                     Title = s.Title
+                 }).ToListAsync();
 
             var ids = model.UserSubscriptions.Select(us => us.Id);
 
@@ -739,13 +738,13 @@ namespace Memberships.Controllers
             return RedirectToAction("Subscriptions", "Account", new { userId = model.UserId });
         }
 
-        
+
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> RemoveUserSubscription(string userId, int subscriptionId)
         {
             try
             {
-                if (userId == null || userId.Length.Equals(0) || subscriptionId <= 0 )
+                if (userId == null || userId.Length.Equals(0) || subscriptionId <= 0)
                 {
                     return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
                 }
@@ -766,6 +765,56 @@ namespace Memberships.Controllers
             }
 
             return RedirectToAction("Subscriptions", "Account", new { userId = userId });
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> RegisterUserAsync(RegisterUserModel model)
+        {
+            model.AcceptUserAgreement = true;
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FirstName = model.Name,
+                    IsActive = true,
+                    Registered = DateTime.Now,
+                    EmailConfirmed = true
+                };
+                var result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                    // Send an email with this link
+                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    return PartialView("_RegisterUserPartial", model);
+                }
+                AddUserErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return PartialView("_RegisterUserPartial", model);
+        }
+
+        private void AddUserErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                if (error.StartsWith("Name") && error.EndsWith("is already taken."))
+                {
+                    continue;
+                }
+
+                ModelState.AddModelError("", error);
+            }
         }
 
     }

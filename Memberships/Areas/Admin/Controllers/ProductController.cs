@@ -1,17 +1,19 @@
-﻿using System.Collections.Generic;
-using Memberships.Areas.Admin.Extensions;
+﻿using Memberships.Areas.Admin.Extensions;
+using Memberships.Areas.Admin.Models;
 using Memberships.Entities;
 using Memberships.Models;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using Memberships.Areas.Admin.Models;
 
 
 namespace Memberships.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
+
     public class ProductController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();

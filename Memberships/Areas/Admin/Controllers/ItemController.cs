@@ -8,6 +8,7 @@ using System.Web.Mvc;
 
 namespace Memberships.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ItemController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();

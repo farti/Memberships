@@ -1,0 +1,31 @@
+﻿body {
+    font-family: 'Open Sans', sans-serif;
+}
+
+.navbar {
+    border-bottom: 1px solid #C8C8C8;
+    background-color: #4e5d6c;
+}
+
+.nav a {
+    color: #fff;
+}
+
+    .nav a:hover {
+        color: #df691a;
+    }
+
+.nav > li > a:hover {
+    background-color: #4e5d6c;
+}
+
+.navbar-nav > li > a {
+    margin-top: 20px;
+    padding-top: 5px;
+    max-height: 40px;
+}
+
+.body-content {
+    margin-top: 20px;
+
+}

@@ -1,5 +1,5 @@
-﻿@using Memberships.Extensions
-@model Memberships.Areas.Admin.Models.ProductModel
+﻿@model Memberships.Areas.Admin.Models.ProductModel
+@using Memberships.Extensions
 
 @{
     ViewBag.Title = "Edit";
@@ -42,8 +42,10 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProductTypes, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.ProductTypeId,Model.ProductTypes.ToSelectListItem(Model.ProductTypeId), "== Select ==",
-                     new { @class = "form-control" })
+                @Html.DropDownListFor(
+                    model => model.ProductTypeId,
+                    Model.ProductTypes.ToSelectListItem(Model.ProductTypeId),
+                    new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ProductTypeId, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -51,21 +53,20 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ProductLinkTexts, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownListFor(model => model.ProductLinkTextId,Model.ProductLinkTexts.ToSelectListItem(Model.ProductLinkTextId), "== Select ==",
+                @Html.DropDownListFor(
+                    model => model.ProductLinkTextId,
+                    Model.ProductLinkTexts.ToSelectListItem(Model.ProductLinkTextId),
                     new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ProductLinkTextId, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <br />
-        <br />
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Save" class="btn btn-success" />
             </div>
         </div>
     </div>
-
 }
 
 <div>

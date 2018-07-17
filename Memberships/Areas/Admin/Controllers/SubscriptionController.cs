@@ -1,14 +1,19 @@
-﻿using Memberships.Entities;
-using Memberships.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
-using System.Net;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Net;
+using System.Web;
 using System.Web.Mvc;
+using Memberships.Entities;
+using Memberships.Models;
+using System.Transactions;
 
 namespace Memberships.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
-
     public class SubscriptionController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -42,7 +47,7 @@ namespace Memberships.Areas.Admin.Controllers
 
         // POST: Admin/Subscription/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Id,Title,Description,RegistrationCode")] Subscription subscription)
@@ -74,7 +79,7 @@ namespace Memberships.Areas.Admin.Controllers
 
         // POST: Admin/Subscription/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,Title,Description,RegistrationCode")] Subscription subscription)
@@ -109,8 +114,22 @@ namespace Memberships.Areas.Admin.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             Subscription subscription = await db.Subscriptions.FindAsync(id);
-            db.Subscriptions.Remove(subscription);
-            await db.SaveChangesAsync();
+            using (var transaction = new TransactionScope(
+                    TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+                    var prodSubscr = db.SubscriptionProducts.Where(
+                        sp => sp.SubscriptionId.Equals(id));
+                    db.SubscriptionProducts.RemoveRange(prodSubscr);
+                    db.Subscriptions.Remove(subscription);
+
+                    await db.SaveChangesAsync();
+                    transaction.Complete();
+                }
+                catch { transaction.Dispose(); }
+            }
+
             return RedirectToAction("Index");
         }
 

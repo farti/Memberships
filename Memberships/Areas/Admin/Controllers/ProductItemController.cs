@@ -1,16 +1,20 @@
-﻿using Memberships.Areas.Admin.Extensions;
-using Memberships.Areas.Admin.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
 using Memberships.Entities;
 using Memberships.Models;
-using System.Data.Entity;
-using System.Net;
-using System.Threading.Tasks;
-using System.Web.Mvc;
+using Memberships.Areas.Admin.Models;
+using Memberships.Areas.Admin.Extensions;
 
 namespace Memberships.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
-
     public class ProductItemController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -33,10 +37,11 @@ namespace Memberships.Areas.Admin.Controllers
             {
                 return HttpNotFound();
             }
+
             return View(await productItem.Convert(db));
         }
 
-        // GET: Admin/ProductItem/Create
+        // GET: Admin/ProductItem/Create  /////////////////////////////
         public async Task<ActionResult> Create()
         {
             var model = new ProductItemModel
@@ -45,12 +50,11 @@ namespace Memberships.Areas.Admin.Controllers
                 Products = await db.Products.ToListAsync()
             };
             return View(model);
-
         }
 
         // POST: Admin/ProductItem/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(
@@ -83,7 +87,7 @@ namespace Memberships.Areas.Admin.Controllers
 
         // POST: Admin/ProductItem/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(
@@ -120,7 +124,8 @@ namespace Memberships.Areas.Admin.Controllers
         // POST: Admin/ProductItem/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteConfirmed(int itemId, int productId)
+        public async Task<ActionResult> DeleteConfirmed(
+            int itemId, int productId)
         {
             ProductItem productItem = await GetProductItem(itemId, productId);
             db.ProductItems.Remove(productItem);
@@ -142,7 +147,6 @@ namespace Memberships.Areas.Admin.Controllers
             }
             catch { return null; }
         }
-
 
         protected override void Dispose(bool disposing)
         {

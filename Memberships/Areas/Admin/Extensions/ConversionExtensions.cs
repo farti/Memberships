@@ -12,9 +12,11 @@ namespace Memberships.Areas.Admin.Extensions
     public static class ConversionExtensions
     {
         #region Product
-        public static async Task<IEnumerable<ProductModel>> Convert(this IEnumerable<Product> products, ApplicationDbContext db)
+        public static async Task<IEnumerable<ProductModel>> Convert(
+            this IEnumerable<Product> products, ApplicationDbContext db)
         {
-            if (products.Count().Equals(0)) return new List<ProductModel>();
+            if (products.Count().Equals(0))
+                return new List<ProductModel>();
 
             var texts = await db.ProductLinkTexts.ToListAsync();
             var types = await db.ProductTypes.ToListAsync();
@@ -33,11 +35,13 @@ namespace Memberships.Areas.Admin.Extensions
                    };
         }
 
-        // for the Details View
-        public static async Task<ProductModel> Convert(this Product product, ApplicationDbContext db)
+        public static async Task<ProductModel> Convert(
+        this Product product, ApplicationDbContext db)
         {
-            var text = await db.ProductLinkTexts.FirstOrDefaultAsync(p => p.Id.Equals(product.ProductLinkTextId));
-            var type = await db.ProductTypes.FirstOrDefaultAsync(p => p.Id.Equals(product.ProductTypeId));
+            var text = await db.ProductLinkTexts.FirstOrDefaultAsync(
+                p => p.Id.Equals(product.ProductLinkTextId));
+            var type = await db.ProductTypes.FirstOrDefaultAsync(
+                p => p.Id.Equals(product.ProductTypeId));
 
             var model = new ProductModel
             {
@@ -56,31 +60,31 @@ namespace Memberships.Areas.Admin.Extensions
 
             return model;
         }
-
         #endregion
 
-        #region ProductItem
-        //for the ProductItem create
-
-        public static async Task<IEnumerable<ProductItemModel>> Convert(this IQueryable<ProductItem> productItems, ApplicationDbContext db)
+        #region Product Item
+        public static async Task<IEnumerable<ProductItemModel>> Convert(
+        this IQueryable<ProductItem> productItems, ApplicationDbContext db)
         {
-            if (productItems.Count().Equals(0)) return new List<ProductItemModel>();
+            if (productItems.Count().Equals(0))
+                return new List<ProductItemModel>();
 
             return await (from pi in productItems
                           select new ProductItemModel
                           {
                               ItemId = pi.ItemId,
                               ProductId = pi.ProductId,
-                              ItemTitle = db.Items.FirstOrDefault(i => i.Id.Equals(pi.ItemId)).Title,
-                              ProductTitle = db.Products.FirstOrDefault(p => p.Id.Equals(pi.ProductId)).Title
-
+                              ItemTitle = db.Items.FirstOrDefault(
+                                  i => i.Id.Equals(pi.ItemId)).Title,
+                              ProductTitle = db.Products.FirstOrDefault(
+                                  p => p.Id.Equals(pi.ProductId)).Title
                           }).ToListAsync();
         }
 
-        //for the ProductItem edit
-        public static async Task<ProductItemModel> Convert(this ProductItem productItem, ApplicationDbContext db, bool addListData = true)
+        public static async Task<ProductItemModel> Convert(
+        this ProductItem productItem, ApplicationDbContext db,
+        bool addListData = true)
         {
-
             var model = new ProductItemModel
             {
                 ItemId = productItem.ItemId,
@@ -88,14 +92,13 @@ namespace Memberships.Areas.Admin.Extensions
                 Items = addListData ? await db.Items.ToListAsync() : null,
                 Products = addListData ? await db.Products.ToListAsync() : null,
                 ItemTitle = (await db.Items.FirstOrDefaultAsync(i =>
-                    i.Id.Equals(productItem.ItemId))).Title,
+                   i.Id.Equals(productItem.ItemId))).Title,
                 ProductTitle = (await db.Products.FirstOrDefaultAsync(p =>
-                    p.Id.Equals(productItem.ProductId))).Title
+                   p.Id.Equals(productItem.ProductId))).Title
             };
 
             return model;
         }
-
 
         public static async Task<bool> CanChange(
             this ProductItem productItem, ApplicationDbContext db)
@@ -111,17 +114,16 @@ namespace Memberships.Areas.Admin.Extensions
             return oldPI.Equals(1) && newPI.Equals(0);
         }
 
-
         public static async Task Change(
             this ProductItem productItem, ApplicationDbContext db)
         {
             var oldProductItem = await db.ProductItems.FirstOrDefaultAsync(
-                pi => pi.ProductId.Equals(productItem.OldProductId) &&
-                      pi.ItemId.Equals(productItem.OldItemId));
+                    pi => pi.ProductId.Equals(productItem.OldProductId) &&
+                    pi.ItemId.Equals(productItem.OldItemId));
 
             var newProductItem = await db.ProductItems.FirstOrDefaultAsync(
                 pi => pi.ProductId.Equals(productItem.ProductId) &&
-                      pi.ItemId.Equals(productItem.ItemId));
+                pi.ItemId.Equals(productItem.ItemId));
 
             if (oldProductItem != null && newProductItem == null)
             {
@@ -146,13 +148,11 @@ namespace Memberships.Areas.Admin.Extensions
                 }
             }
         }
-
         #endregion
 
         #region Subscription Product
-
         public static async Task<IEnumerable<SubscriptionProductModel>> Convert(
-         this IQueryable<SubscriptionProduct> subscriptionProducts, ApplicationDbContext db)
+        this IQueryable<SubscriptionProduct> subscriptionProducts, ApplicationDbContext db)
         {
             if (subscriptionProducts.Count().Equals(0))
                 return new List<SubscriptionProductModel>();
@@ -238,7 +238,7 @@ namespace Memberships.Areas.Admin.Extensions
                 }
             }
         }
-
         #endregion
+
     }
 }

@@ -1,16 +1,20 @@
-﻿using Memberships.Areas.Admin.Extensions;
-using Memberships.Areas.Admin.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
 using Memberships.Entities;
 using Memberships.Models;
-using System.Data.Entity;
-using System.Net;
-using System.Threading.Tasks;
-using System.Web.Mvc;
+using Memberships.Areas.Admin.Extensions;
+using Memberships.Areas.Admin.Models;
 
 namespace Memberships.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
-
     public class SubscriptionProductController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -22,14 +26,16 @@ namespace Memberships.Areas.Admin.Controllers
         }
 
         // GET: Admin/SubscriptionProduct/Details/5
-        public async Task<ActionResult> Details(int? subscriptionId, int? productId)
+        public async Task<ActionResult> Details(
+            int? subscriptionId, int? productId)
         {
             if (subscriptionId == null || productId == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            SubscriptionProduct subscriptionProduct =
+                await GetSubscriptionProduct(subscriptionId, productId);
 
-            SubscriptionProduct subscriptionProduct = await GetSubscriptionProduct(subscriptionId, productId);
             if (subscriptionProduct == null)
             {
                 return HttpNotFound();
@@ -50,7 +56,7 @@ namespace Memberships.Areas.Admin.Controllers
 
         // POST: Admin/SubscriptionProduct/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(
@@ -67,14 +73,16 @@ namespace Memberships.Areas.Admin.Controllers
         }
 
         // GET: Admin/SubscriptionProduct/Edit/5
-        public async Task<ActionResult> Edit(int? subscriptionId, int? productId)
+        public async Task<ActionResult> Edit(
+            int? subscriptionId, int? productId)
         {
             if (subscriptionId == null || productId == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            SubscriptionProduct subscriptionProduct =
+                await GetSubscriptionProduct(subscriptionId, productId);
 
-            SubscriptionProduct subscriptionProduct = await GetSubscriptionProduct(subscriptionId, productId);
             if (subscriptionProduct == null)
             {
                 return HttpNotFound();
@@ -84,16 +92,19 @@ namespace Memberships.Areas.Admin.Controllers
 
         // POST: Admin/SubscriptionProduct/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "ProductId,SubscriptionId, OldProductId,OldSubscriptionId")] SubscriptionProduct subscriptionProduct)
+        public async Task<ActionResult> Edit(
+            [Bind(Include = "ProductId,SubscriptionId,OldProductId,OldSubscriptionId")]
+            SubscriptionProduct subscriptionProduct)
         {
             if (ModelState.IsValid)
             {
                 var canChange = await subscriptionProduct.CanChange(db);
                 if (canChange)
                     await subscriptionProduct.Change(db);
+
                 return RedirectToAction("Index");
             }
             return View(subscriptionProduct);
@@ -131,7 +142,7 @@ namespace Memberships.Areas.Admin.Controllers
         }
 
         private async Task<SubscriptionProduct> GetSubscriptionProduct(
-            int? subscriptionId, int? productId)
+        int? subscriptionId, int? productId)
         {
             try
             {

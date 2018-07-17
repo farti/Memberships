@@ -1,5 +1,5 @@
-﻿@using Memberships.Areas.Admin.Models
-@model IEnumerable<Memberships.Entities.Subscription>
+﻿@model IEnumerable<Memberships.Entities.Subscription>
+@using Memberships.Areas.Admin.Models;
 
 @{
     ViewBag.Title = "Index";
@@ -10,8 +10,8 @@
 <p>
     @Html.Partial("_CreateButtonPartial")
 </p>
-<table class="table table-hover">
-    <tr style="background-color: #bf5a16;">
+<table class="table table-condensed table-striped">
+    <tr class="success">
         <th>
             @Html.DisplayNameFor(model => model.Title)
         </th>
@@ -24,21 +24,20 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RegistrationCode)
-        </td>
-        
-        @Html.Partial("_TableButtonsPartial", new SmallButtonModel { Id = item.Id })
-
-    </tr>
-}
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RegistrationCode)
+            </td>
+            @Html.Partial("_TableButtonsPartial",
+                new SmallButtonModel { Id = item.Id })
+        </tr>
+    }
 
 </table>

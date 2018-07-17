@@ -1,14 +1,18 @@
-﻿using Memberships.Entities;
-using Memberships.Models;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
-using System.Net;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Net;
+using System.Web;
 using System.Web.Mvc;
+using Memberships.Entities;
+using Memberships.Models;
 
 namespace Memberships.Areas.Admin.Controllers
 {
     [Authorize(Roles = "Admin")]
-
     public class ItemTypeController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -42,7 +46,7 @@ namespace Memberships.Areas.Admin.Controllers
 
         // POST: Admin/ItemType/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create([Bind(Include = "Id,Title")] ItemType itemType)
@@ -74,7 +78,7 @@ namespace Memberships.Areas.Admin.Controllers
 
         // POST: Admin/ItemType/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit([Bind(Include = "Id,Title")] ItemType itemType)
@@ -109,8 +113,13 @@ namespace Memberships.Areas.Admin.Controllers
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             ItemType itemType = await db.ItemTypes.FindAsync(id);
-            db.ItemTypes.Remove(itemType);
-            await db.SaveChangesAsync();
+            var isUnused = await db.Items.CountAsync(i => i.ItemTypeId.Equals(id)) == 0;
+            if (isUnused)
+            {
+                db.ItemTypes.Remove(itemType);
+                await db.SaveChangesAsync();
+            }
+
             return RedirectToAction("Index");
         }
 

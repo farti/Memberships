@@ -1,5 +1,5 @@
-﻿$(function() {
-    var registerUserChceckBox = $('#AcceptUserAgreement').click(
+﻿$(function () {
+    var registerUserCheckBox = $('#AcceptUserAgreement').click(
         onToggleRegisterUserDisabledClick);
 
     function onToggleRegisterUserDisabledClick() {
@@ -20,9 +20,10 @@
                 __RequestVerificationToken: antiforgery, email: email, name: name,
                 password: pwd, acceptUserAgreement: true
             },
-            function(data) {
+            function (data) {
                 var parsed = $.parseHTML(data);
                 var hasErrors = $(parsed).find('[data-valmsg-summary]').text().replace(/\n|\r/g, "").length > 0;
+
                 if (hasErrors == true) {
                     $('.register-user-panel').html(data);
                     registerUserCheckBox = $('#AcceptUserAgreement').click(
@@ -30,17 +31,14 @@
                     registerUserButton = $('.register-user-panel button').click(
                         onRegisterUserClick);
                     $('.register-user-panel button').removeClass('disabled');
-                } else {
+                }
+                else {
                     registerUserCheckBox = $('#AcceptUserAgreement').click(
                         onToggleRegisterUserDisabledClick);
                     registerUserButton = $('.register-user-panel button').click(
                         onRegisterUserClick);
                     location.href = '/Home/Index';
                 }
-
-            }).fail(function(xhr, status, error) {
-            alert('Post unsuccessful');
-        });
+            }).fail(function (xhr, status, error) { alert('Post unsuccessful'); })
     }
-
 });

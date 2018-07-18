@@ -1,27 +1,23 @@
-﻿@using Memberships.Areas.Admin.Models;
-@model IEnumerable<Memberships.Models.UserViewModel>
+﻿@model IEnumerable<Memberships.Models.UserViewModel>
+@using Memberships.Areas.Admin.Models;
 
 @{
     ViewBag.Title = "Users & Subscriptions";
 }
 
 <h2>Users & Subscriptions</h2>
-
 @if (Request.IsAuthenticated && User.IsInRole("Admin"))
 {
     <p>
         @Html.Partial("_CreateButtonPartial")
     </p>
-    <table class="table table-hover">
-        <tr style="background-color: #bf5a16;">
+    <table class="table table-condensed table-striped">
+        <tr class="success">
             <th>
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Password)
             </th>
             <th></th>
         </tr>
@@ -35,8 +31,8 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.FirstName)
                 </td>
-
-                @Html.Partial("_TableButtonsPartial", new SmallButtonModel { UserID = item.Id })
+                @Html.Partial("_TableButtonsPartial",
+                    new SmallButtonModel { UserId = item.Id })
             </tr>
         }
 

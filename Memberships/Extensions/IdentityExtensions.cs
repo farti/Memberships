@@ -17,6 +17,7 @@ namespace Memberships.Extensions
 
             return user != null ? user.FirstName : string.Empty;
         }
+
         public static async Task GetUsers(this List<UserViewModel> users)
         {
             var db = ApplicationDbContext.Create();

@@ -1,4 +1,4 @@
-﻿
+﻿@model IEnumerable<Memberships.Models.ThumbnailAreaModel>
 @using Memberships.Models
 
 @{
@@ -8,10 +8,10 @@
 <div class="row">
     @if (User.Identity.IsAuthenticated)
     {
-
-        <div class="col-xs-12">
-            <h2>I'm Logged in</h2>
-        </div>
+        foreach (var area in Model)
+         {
+             @Html.Partial("_ThumbnailAreaPartial", area)
+         }
     }
     else
     {
